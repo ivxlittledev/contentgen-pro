@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #3B82F6;
+  --secondary-color: #10B981;
+  --primary-rgb: 59, 130, 246;
+  --secondary-rgb: 16, 185, 129;
+}
+
+/* Custom styles for dynamic theming */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: rgb(var(--primary-rgb) / 0.9);
+  border-color: rgb(var(--primary-rgb) / 0.9);
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-secondary {
+  color: var(--secondary-color);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.border-primary {
+  border-color: var(--primary-color);
+}
+
+.border-secondary {
+  border-color: var(--secondary-color);
+}
+
+.bg-primary-50 {
+  background-color: rgb(var(--primary-rgb) / 0.1);
+}
+
+.bg-primary-100 {
+  background-color: rgb(var(--primary-rgb) / 0.2);
+}
+
+.ring-primary {
+  --tw-ring-color: var(--primary-color);
+}
+
+/* Custom focus styles */
+.focus-primary:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgb(var(--primary-rgb) / 0.1);
+}
