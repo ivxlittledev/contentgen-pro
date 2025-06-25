@@ -1,0 +1,22 @@
+# Commandes à exécuter sur le serveur de production
+
+# 1. Vérifier le status git actuel
+git status
+git log --oneline -5
+
+# 2. Forcer la mise à jour depuis GitHub
+git fetch origin
+git reset --hard origin/main
+git clean -fd
+
+# 3. Vérifier que les scripts sont bien là
+ls -la *.sh
+
+# 4. Rendre les scripts exécutables
+chmod +x *.sh
+
+# 5. Exécuter le diagnostic
+./debug-production.sh
+
+# 6. Si nécessaire, exécuter le déploiement
+./deploy-production.sh

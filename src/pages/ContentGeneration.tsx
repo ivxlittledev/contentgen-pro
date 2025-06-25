@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { 
   PenTool, 
   Settings, 
@@ -46,6 +47,7 @@ interface GenerationHistory {
 }
 
 export function ContentGeneration() {
+  const { user, hasPermission } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('article-news');
   const [tone, setTone] = useState('professional');
@@ -74,7 +76,12 @@ export function ContentGeneration() {
   const loadProviders = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${API_URL}/api/ai-providers`);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${API_URL}/api/ai-providers`, {
+        headers: token ? {
+          'Authorization': `Bearer ${token}`
+        } : {}
+      });
       if (response.ok) {
         const data = await response.json();
         const providersWithIcons = data.map(provider => ({
@@ -281,10 +288,12 @@ export function ContentGeneration() {
   const saveApiKey = async (providerId: string, apiKey: string) => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${API_URL}/api/ai-providers/${providerId}/api-key`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ apiKey })
       });
@@ -351,13 +360,15 @@ export function ContentGeneration() {
         </div>
         
         <div className="flex items-center space-x-3">
-          <button 
-            onClick={() => setShowApiConfig(!showApiConfig)}
-            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Key className="w-4 h-4" />
-            <span>API Config</span>
-          </button>
+          {hasPermission('manage_api_keys') && (
+            <button 
+              onClick={() => setShowApiConfig(!showApiConfig)}
+              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Key className="w-4 h-4" />
+              <span>API Config</span>
+            </button>
+          )}
         </div>
       </div>
       

@@ -643,7 +643,7 @@ app.get('/api/ai-providers', (req, res) => {
   res.json(aiProviders.sort((a, b) => a.name.localeCompare(b.name)));
 });
 
-app.put('/api/ai-providers/:id/api-key', (req, res) => {
+app.put('/api/ai-providers/:id/api-key', authenticateToken, requirePermission('manage_api_keys'), (req, res) => {
   const { apiKey } = req.body;
   const provider = aiProviders.find(p => p.id === req.params.id);
   
@@ -681,7 +681,7 @@ app.put('/api/ai-providers/:id/api-key', (req, res) => {
   });
 });
 
-app.post('/api/ai-providers/:id/test', async (req, res) => {
+app.post('/api/ai-providers/:id/test', authenticateToken, requirePermission('manage_api_keys'), async (req, res) => {
   const provider = aiProviders.find(p => p.id === req.params.id);
   
   if (!provider) {
@@ -1747,6 +1747,12 @@ async function initializeDemoDataSync() {
     'CoinGape', 'Coinpedia', 'Cointelegraph', 'CryptoNews', 'News Bitcoin', 'TheNewsCrypto'
   ];
 
+  // Initialiser les scénarios si nécessaire
+  if (!global.scenarios) {
+    global.scenarios = [];
+  }
+  const scenarios = global.scenarios;
+
   // Scénarios de scraping crypto
   CRYPTO_SOURCES.forEach((source, index) => {
     scenarios.push({
@@ -2075,7 +2081,7 @@ app.listen(PORT, '0.0.0.0', async () => {
     
     // Charger les données de démonstration
     await initializeDemoData();
-    // await initializeDemoDataSync(); // Temporairement désactivé
+    await initializeDemoDataSync();
     
     console.log(`\n🗄️ Base de données SQLite initialisée avec succès !`);
     console.log(`🧹 Nettoyage automatique programmé tous les jours à 3h`);
